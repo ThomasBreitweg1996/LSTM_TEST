@@ -112,15 +112,21 @@ model = tf.keras.models.Sequential()
 model.add(tf.keras.layers.LSTM(50, activation='sigmoid', return_sequences=True))
 model.add(tf.keras.layers.LSTM(50, activation='sigmoid', return_sequences=False))
 # to get one output and not 50
-model.add(tf.keras.layers.Dense(1))
+model.add(tf.keras.layers.Dense(6))
+model.add(tf.keras.layers.Softmax())
+# model.add(tf.keras.layers.Dense(1))                             # 1st run [[2.3007536]] 2nd run [[2.6000843]]
+# model.add(tf.keras.layers.Dense(6, activation='softmax'))       [[1.166566  1.16657   1.1667744 1.1668509 1.1665406 1.166698 ]]
+# model.add(tf.keras.layers.Dense(6))                           [[3.7597287 3.4167871 3.6512945 3.4776783 3.5195947 3.3871775]]
 
 # TODO: checkout what the compile method is doing
-model.compile(optimizer='adam', loss='mean_squared_error', metrics=['accuracy'])
+model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy'])
+# sparse_categorical_crossentropy 2 epochs :  [[0.554284   0.6156796  0.79247606 0.7524952  0.41979283 0.75394714]]
+# sparse_categorical_crossentropy 20 epochs : [[ 0.605383    0.72186816  0.7491164  -0.14934778  0.6371992   0.54124486]]
 
 # Train the model
 # TODO: convert train data correct
 
-history1 = model.fit(X_train, y_train, epochs=2)
+history1 = model.fit(X_train, y_train, epochs=12)
 
 # Plot loss
 # TODO: show accuracy as well
@@ -130,7 +136,7 @@ plt.show()
 
 
 # Prediction - Use the model
-test = X_test[1666]
+test = X_test[148]
 test = test.reshape((1, n_steps, n_features))
 prediction = model.predict(test)
-print(prediction+1)
+print(prediction)
